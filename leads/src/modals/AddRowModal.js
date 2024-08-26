@@ -99,7 +99,7 @@
 
 import React, { useState } from 'react';
 import Modal from 'react-modal';
-import './welcome.css'; // Ensure this path is correct
+import '../welcome.css'; // Ensure this path is correct
 
 Modal.setAppElement('#root');
 

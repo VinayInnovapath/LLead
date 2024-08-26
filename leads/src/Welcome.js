@@ -1,10 +1,11 @@
+
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
 // import { AgGridReact } from 'ag-grid-react';
 // import 'ag-grid-community/styles/ag-grid.css';
 // import 'ag-grid-community/styles/ag-theme-alpine.css';
 // import './welcome.css';
-// import AddRowModal from './AddRowModal'; // Ensure this path is correct
+// import AddRowModal from './modals/AddRowModal'; // Ensure this path is correct
 // import * as XLSX from 'xlsx';
 // import jsPDF from 'jspdf';
 
@@ -47,6 +48,7 @@
 //       setAllData(data); // Store all data
 //       setFilteredData(data); // Initialize filteredData
 //       setTotalRows(totalRows);
+//       setCurrentPage(1); // Reset to the first page
 //       updateRowData(data.slice(0, paginationPageSize)); // Set initial data for the first page
 //       setupColumns(data);
 //     } catch (error) {
@@ -66,7 +68,6 @@
 //   };
 
 //   const updateRowData = (data) => {
-//     console.log('Updating row data:', data); // Debugging statement
 //     setRowData(data);
 //   };
 
@@ -136,10 +137,11 @@
 
 //   const resetSearch = () => {
 //     setSearchValue('');
-//     setFilteredData(allData); // Reset filteredData to allData
-//     setTotalRows(allData.length); // Update totalRows based on allData
-//     const startIndex = (currentPage - 1) * paginationPageSize;
-//     updateRowData(allData.slice(startIndex, startIndex + paginationPageSize)); // Reset rowData
+//     fetchData(); // Refetch data and reset the table
+//   };
+
+//   const handleReloadGrid = () => {
+//     fetchData(); // Refetch data and update the grid
 //   };
 
 //   const totalPages = Math.ceil(totalRows / paginationPageSize);
@@ -203,7 +205,7 @@
 //         <button className="action-button" title="Edit Selected Row">✏️</button>
 //         <button className="action-button" title="View Selected Row">📄</button>
 //         <button className="action-button" title="Find Records" onClick={handleSearchToggle}>🔍</button>
-//         <button className="action-button" title="Reload Grid">🔄</button>
+//         <button className="action-button" title="Reload Grid" onClick={handleReloadGrid}>🔄</button>
 //         <button className="action-button" title="Export to Excel" onClick={handleExportToExcel}>📊</button>
 //         <button className="action-button" title="Export to PDF" onClick={handleExportToPDF}>📄</button>
 //       </div>
@@ -223,17 +225,14 @@
 
 
 
-
-
-
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import './welcome.css';
-import AddRowModal from './AddRowModal'; // Ensure this path is correct
+import AddRowModal from './modals/AddRowModal'; // Ensure this path is correct
+import ViewRowModal from './modals/ViewRowModal'; // Ensure this path is correct
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 
@@ -246,8 +245,12 @@ const Welcome = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalRows, setTotalRows] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false); // State for view row modal
+  const [selectedRow, setSelectedRow] = useState(null); // State for selected row
   const [isSearchVisible, setIsSearchVisible] = useState(false); // State to toggle search field
   const [searchValue, setSearchValue] = useState(''); // State to manage search input
+
+  const gridRef = React.createRef();
 
   useEffect(() => {
     fetchData();
@@ -274,15 +277,10 @@ const Welcome = () => {
       });
       const { data, totalRows } = response.data;
       setAllData(data); // Store all data
-      if (!searchValue.trim()) {
-        // If not searching, reset filteredData and update rowData
-        setFilteredData(data); // Initialize filteredData
-        setTotalRows(totalRows);
-        updateRowData(data.slice(0, paginationPageSize)); // Set initial data for the first page
-      } else {
-        // If searching, keep filteredData based on searchValue
-        handleSearch(); // Reapply search with existing searchValue
-      }
+      setFilteredData(data); // Initialize filteredData
+      setTotalRows(totalRows);
+      setCurrentPage(1); // Reset to the first page
+      updateRowData(data.slice(0, paginationPageSize)); // Set initial data for the first page
       setupColumns(data);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -301,7 +299,6 @@ const Welcome = () => {
   };
 
   const updateRowData = (data) => {
-    console.log('Updating row data:', data); // Debugging statement
     setRowData(data);
   };
 
@@ -371,14 +368,24 @@ const Welcome = () => {
 
   const resetSearch = () => {
     setSearchValue('');
-    setFilteredData(allData); // Reset filteredData to allData
-    setTotalRows(allData.length); // Update totalRows based on allData
-    const startIndex = (currentPage - 1) * paginationPageSize;
-    updateRowData(allData.slice(startIndex, startIndex + paginationPageSize)); // Reset rowData
+    fetchData(); // Refetch data and reset the table
   };
 
   const handleReloadGrid = () => {
     fetchData(); // Refetch data and update the grid
+  };
+
+  const handleViewRow = () => {
+    if (gridRef.current) {
+      const selectedRows = gridRef.current.api.getSelectedRows();
+      if (selectedRows.length > 0) {
+        const selectedRowData = selectedRows[0];
+        setSelectedRow(selectedRowData);
+        setIsViewModalOpen(true);
+      } else {
+        alert('Please select a row to view.');
+      }
+    }
   };
 
   const totalPages = Math.ceil(totalRows / paginationPageSize);
@@ -418,6 +425,7 @@ const Welcome = () => {
       </div>
       <div className="ag-theme-alpine">
         <AgGridReact
+          ref={gridRef}
           gridOptions={gridOptions}
           rowData={rowData}
           columnDefs={columnDefs}
@@ -440,7 +448,7 @@ const Welcome = () => {
       <div className="action-buttons">
         <button className="action-button" title="Add New Row" onClick={handleAddRow}>+</button>
         <button className="action-button" title="Edit Selected Row">✏️</button>
-        <button className="action-button" title="View Selected Row">📄</button>
+        <button className="action-button" title="View Selected Row" onClick={handleViewRow}>📄</button>
         <button className="action-button" title="Find Records" onClick={handleSearchToggle}>🔍</button>
         <button className="action-button" title="Reload Grid" onClick={handleReloadGrid}>🔄</button>
         <button className="action-button" title="Export to Excel" onClick={handleExportToExcel}>📊</button>
@@ -450,6 +458,11 @@ const Welcome = () => {
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
         onSave={handleSaveRow}
+      />
+      <ViewRowModal
+        isOpen={isViewModalOpen}
+        onRequestClose={() => setIsViewModalOpen(false)}
+        rowData={selectedRow}
       />
     </div>
   );

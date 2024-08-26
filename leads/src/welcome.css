@@ -46,7 +46,8 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
   position: relative;
-  z-index: 10; /* Ensure it’s above the buttons */
+  z-index: 10;
+   /* Ensure it’s above the buttons */
 }
 
 /* Action buttons container styling */
@@ -58,7 +59,7 @@
   left: 40px; /* Align to the left side */
   top: 570px; /* Position above the pagination controls */
   background-color: transparent; /* Transparent background */
-  z-index: 10; /* Ensure it’s above other content */
+  z-index: 100; /* Ensure it’s above other content */
   
 }
 
@@ -212,7 +213,7 @@
   padding: 15px; /* Adjust padding as needed */
   overflow-y: auto;
   max-height: 70vh; /* Adjust max height for better visibility */
-  z-index: 1001; /* Ensure modal content is above the overlay */
+  z-index: 1000; /* Ensure modal content is above the overlay */
 
 }
 
@@ -294,3 +295,99 @@
 .modal-actions .cancel-button:hover {
   background-color: #bdc3c7;
 }
+
+
+
+
+
+/* Modal overlay for view details */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+/* Modal content styling for view details */
+.modal-content {
+  width: 40%; /* Adjust width as needed */
+  max-width: 600px; /* Set a maximum width for larger screens */
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+
+}
+
+/* Modal header styling */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 20px; /* Slightly larger font size */
+  color: #2c3e50;
+}
+
+.modal-close-button {
+  background: transparent;
+  border: none;
+  font-size: 20px; /* Larger font size for close button */
+  cursor: pointer;
+  color: #3498db;
+}
+
+/* Modal body styling */
+.modal-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-field {
+  margin-bottom: 10px;
+}
+
+.modal-field label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.modal-field p {
+  margin: 0;
+  padding: 8px;
+  border: 1px solid #bdc3c7;
+  border-radius: 4px;
+}
+
+/* Modal actions */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+}
+
+.modal-actions .cancel-button {
+  background-color: #e0e0e0;
+}
+
+.modal-actions .cancel-button:hover {
+  background-color: #bdc3c7;
+}
+
+
+
+
+
+

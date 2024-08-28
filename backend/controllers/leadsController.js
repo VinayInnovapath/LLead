@@ -18,4 +18,20 @@ const getLeads = (req, res) => {
   });
 };
 
-module.exports = { getLeads };
+
+const insertLead = (req, res) => {
+  const newLead = req.body;
+
+  // Make sure to sanitize and validate input data as necessary
+  req.db.query('INSERT INTO leads SET ?', newLead, (err, results) => {
+    if (err) {
+      console.error('Database insert error:', err);
+      return res.status(500).json({ message: 'Database error' });
+    }
+    res.status(201).json({ id: results.insertId, ...newLead });
+  });
+};
+
+module.exports = { getLeads, insertLead }; // Export the new function along with existing ones
+
+// module.exports = { getLeads };

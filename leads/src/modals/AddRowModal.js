@@ -105,7 +105,6 @@ Modal.setAppElement('#root');
 
 const AddRowModal = ({ isOpen, onRequestClose, onSave }) => {
   const [formData, setFormData] = useState({
-    leadid: '',
     name: '',
     startdate: '',
     phone: '',
@@ -136,8 +135,7 @@ const AddRowModal = ({ isOpen, onRequestClose, onSave }) => {
     callsmade: '',
     closedate: '',
     notes: '',
-    lastmoddatetime: ''
-  });
+   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;

@@ -5,7 +5,7 @@ import '../welcome.css'
 const ViewRowModal = ({ isOpen, onRequestClose, rowData }) => {
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose} contentLabel="View Row Details">
-      <h2>Row Details</h2>
+      <h1  ><b> <i>Row Details</i></b></h1>
       {rowData ? (
         <div>
           {Object.keys(rowData).map(key => (
@@ -17,7 +17,10 @@ const ViewRowModal = ({ isOpen, onRequestClose, rowData }) => {
       ) : (
         <p>No data available</p>
       )}
-      <button onClick={onRequestClose}>Close</button>
+      <button onClick={onRequestClose} style={{ backgroundColor: 'deepskyblue',}}> Close </button>
+  
+
+     
     </Modal>
   );
 };

@@ -410,6 +410,8 @@ const Welcome = () => {
   };
 
   const handleSaveRow = async (newRow) => {
+    console.log(newRow);
+    
     try {
       await axios.post('http://localhost:8001/api/leads', newRow);
       fetchData(); // Refetch data after saving
@@ -603,6 +605,8 @@ const Welcome = () => {
           <button onClick={handleSearch}>Search</button>
         </div>
       )}
+      {/* CONDITIONAL RENDERING OF ACTION BUTTONS */}
+{!isViewModalOpen && (  // Hide action buttons when View Row Modal is open
       <div className="action-buttons">
         <button className="action-button" title="Add New Row" onClick={handleAddRow}>+</button>
         <button className="action-button" title="Edit Selected Row" onClick={handleEditRow}>✏️</button>
@@ -612,6 +616,7 @@ const Welcome = () => {
         <button className="action-button" title="Export to Excel" onClick={handleExportToExcel}>📊</button>
         <button className="action-button" title="Export to PDF" onClick={handleExportToPDF}>📄</button>
       </div>
+      )}
       {message && (
            <div className={`message ${message.type}`}>
           {message.text}
